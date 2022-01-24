@@ -16,7 +16,7 @@ const TodoList = () => {
   const [todoList, setTodoList] = useState([]);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [searchList, setSearchList] = useState("");
+  const [searchList, setSearchList] = useState([]);
   const [completedList, setCompletedList] = useState([]);
 
   const handleChange = (e, setState) => {
@@ -30,6 +30,8 @@ const TodoList = () => {
         { title: title, description: description, status: false },
       ];
       setTodoList(newTodoItems);
+      setTitle("");
+      setDescription("");
       await AsyncStorage.setItem("List", JSON.stringify(newTodoItems));
     }
   };
@@ -54,13 +56,11 @@ const TodoList = () => {
     setCompletedList(newCompletedList);
   };
   const SearchTitle = (e) => {
-    console.log(e);
     const searchListValue = todoList.filter((data) => data?.title == e);
-    console.log("Search List Value", searchListValue);
-    setSearchList([searchListValue]);
+    setSearchList(...searchListValue);
   };
+  console.log("Search List Value", searchList);
   const TodoData = (item) => {
-    console.log("ITEM", item);
     return (
       <>
         <View style={styles.detailContainer}>
@@ -126,11 +126,13 @@ const TodoList = () => {
             placeholder="Enter Title"
             onChangeText={(e) => handleChange(e, setTitle)}
             style={styles.regularStyle}
+            value={title}
           />
           <TextInput
             placeholder="Enter Description"
             onChangeText={(e) => handleChange(e, setDescription)}
             style={styles.regularStyle}
+            value={description}
           />
         </View>
         <View style={styles.submitContainer}>
@@ -148,10 +150,35 @@ const TodoList = () => {
             style={{ ...styles.regularStyle, width: "100%" }}
           />
         </View>
-        <Text style={{ ...styles.todoTextStyle, marginVertical: 10 }}>
-          TODO LIST
-        </Text>
-        <FlatList extraData={todoList} renderItem={TodoData} data={todoList} />
+
+        {todoList.length != 0 ? (
+          <>
+            {searchList?.length != 0 ? (
+              <>
+                <Text style={{ ...styles.todoTextStyle, marginVertical: 10 }}>
+                  Search LIST
+                </Text>
+                <FlatList
+                  extraData={todoList}
+                  renderItem={CompletedList}
+                  data={searchList}
+                />
+              </>
+            ) : (
+              <>
+                <Text style={{ ...styles.todoTextStyle, marginVertical: 10 }}>
+                  TODO LIST
+                </Text>
+                <FlatList
+                  extraData={todoList}
+                  renderItem={TodoData}
+                  data={todoList}
+                />
+              </>
+            )}
+          </>
+        ) : null}
+
         {completedList.length != 0 ? (
           <>
             <Text style={{ ...styles.todoTextStyle, marginVertical: 10 }}>
