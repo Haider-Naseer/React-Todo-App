@@ -1,21 +1,23 @@
-import { StatusBar } from 'expo-status-bar';
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-
+import React from "react";
+import TodoList from "./TodoList";
+import AppLoading from "expo-app-loading"; // expo install expo-app-loading
+import { useFonts } from "expo-font";
 export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
-  );
-}
+  let [fontsLoaded] = useFonts({
+    "montserrat-light": require("./assets/fonts/Montserrat-Light.ttf"),
+    "montserrat-regular": require("./assets/fonts/Montserrat-Regular.ttf"),
+    "montserrat-medium": require("./assets/fonts/Montserrat-Medium.ttf"),
+    "montserrat-semiBold": require("./assets/fonts/Montserrat-SemiBold.ttf"),
+    "montserrat-bold": require("./assets/fonts/Montserrat-Bold.ttf")
+  });
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+  if (!fontsLoaded) {
+    return <AppLoading error={(error) => console.log("Error: ", error)} />;
+  } else {
+    return (
+      <>
+        <TodoList />
+      </>
+    );
+  }
+}
